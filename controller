@@ -1,0 +1,73 @@
+package controller;
+
+import java.util.concurrent.Semaphore;
+
+public class ThreadCarrinho extends Thread {
+
+	private int idCarro;
+	
+	private Semaphore semaforo;
+
+	public ThreadCarrinho(int idCarro, Semaphore semaforo) {
+		this.idCarro = idCarro;
+		this.semaforo = semaforo;
+	}
+
+	@Override
+	public void run() {
+		carroAndando();
+		try {
+			// --------P (Acquire)-------------
+			semaforo.acquire();
+			carroEstacionado();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			// --------V (Release)-------------
+			semaforo.release();
+			carroSaindo();
+		}
+	}
+
+	private void carroAndando() {
+		int distanciaTotal = (int) ((Math.random() * 100) + 1000);
+		int distanciaPercorrida = 0;
+		int deslocamento = 100;
+		int tempo = 30;
+		while (distanciaPercorrida < distanciaTotal) {
+			distanciaPercorrida += deslocamento;
+
+			try {
+				sleep(tempo);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+
+	private void carroEstacionado() {
+		
+		int tempo = (int) ((Math.random() * 401) + 100);
+		try {
+			sleep(tempo);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	 private void carroSaindo() {
+	        String lado;
+	        if (this.idCarro % 4 == 0) {
+	            lado = "Norte";
+	        } else if (this.idCarro % 3 == 0) {
+	            lado = "Sul";
+	        } else if (this.idCarro % 2 == 0) {
+	            lado = "Leste";
+	        } else {
+	            lado = "Oeste";
+	        }
+	        System.out.println("O carro " + this.idCarro + " cruzou para o " +  lado);
+	    }
+	}
