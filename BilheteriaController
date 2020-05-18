@@ -1,0 +1,91 @@
+package controller;
+
+import java.util.concurrent.Semaphore;
+
+public class ThreadBilhete extends Thread {
+
+	private int idBilhete;
+	private static int processoLogin;
+	private Semaphore semaforo;
+
+	public ThreadBilhete(int idBilhete, Semaphore semaforo) {
+		this.idBilhete = idBilhete;
+		this.semaforo = semaforo;
+	}
+
+	// Até aqui, eu dei nome aos bois.
+
+	// Começa o processo construtor
+
+	public void run() {
+		tentandoLogar();
+		try {
+			// --------P (Acquire)-------------
+			semaforo.acquire();
+			tentandoLogar();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			// --------V (Release)-------------
+			semaforo.release();
+			tentandoComprar();
+
+		}
+	}
+
+	private void tentandoLogar() {
+		int tempoUsado = 0;
+		int tempoLimite = 1000;
+
+		while (tempoUsado < tempoLimite) {
+			tempoUsado = (int) ((Math.random() * 50) + 1951);
+
+			if (tempoUsado > 1000) {
+				System.out.println("Timeout.");
+			} else {
+				System.out.println("Usuário " + processoLogin + " logou.");
+			}
+
+		}
+
+	}
+
+	private void tentandoComprar() {
+
+		int tempoComprando = 0;
+		int tempoMaximo = 2000;
+
+		while (tempoComprando < tempoMaximo) {
+			tempoComprando = (int) ((Math.random() * 1000) + 2000);
+			if (tempoComprando > 2500) {
+				System.out.println("Encerrado login, compra não efetuada");
+			} else {
+				System.out.println("Enviado para validação");
+
+				int compraBilhete = 0;
+				int totalBilhete = 100;
+				int contador = 0;
+				{
+
+					while (compraBilhete <= totalBilhete) {
+						compraBilhete = (int) ((Math.random() * 1) + 4);
+
+						if (totalBilhete <= 0) {
+							System.out.println("Bilhete esgotado.");
+							break;
+						} else {
+							System.out.println(contador + " Usuário comprou: " + compraBilhete + " bilhete(s) código: "
+									+ idBilhete);
+							totalBilhete = totalBilhete - compraBilhete;
+
+						}
+
+					}
+
+				}
+
+			}
+		}
+	}
+
+}
