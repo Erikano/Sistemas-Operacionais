@@ -1,0 +1,21 @@
+package main;
+
+import java.util.concurrent.Semaphore;
+
+import controller.ThreadBilhete;
+
+public class View {
+
+	public static void main(String[] args) {
+
+		int permissoes = 100;
+		Semaphore semaforo = new Semaphore(permissoes);
+
+		for (int idBilhete = 0; idBilhete < 300; idBilhete++) {
+			Thread tBilhete = new ThreadBilhete(idBilhete, semaforo);
+			tBilhete.start();
+		}
+
+	}
+
+}
