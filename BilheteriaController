@@ -6,7 +6,7 @@ public class ThreadBilhete extends Thread {
 
 	private int idBilhete;
 	private static int processoLogin;
-	private static int processoValidar;
+	private static int processoTentadenovo;
 	private Semaphore semaforo;
 
 	public ThreadBilhete(int idBilhete, Semaphore semaforo) {
@@ -23,61 +23,52 @@ public class ThreadBilhete extends Thread {
 		try {
 			// --------P (Acquire)-------------
 			semaforo.acquire();
-			tentandoComprar();
+			tentandoValidar();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			// --------V (Release)-------------
 			semaforo.release();
-			tentandoValidar();
-
+			tentaDenovo();
 		}
 	}
 
 	private void tentandoLogar() {
 		int tempoUsado = 0;
 		int tempoLimite = 1000;
-		int tempo = 50;
+		int tempo = 3000;
+		int tempoComprando = 0;
+		int tempoMaximo = 2000;
 
 		while (tempoUsado < tempoLimite) {
 			tempoUsado = (int) ((Math.random() * 50) + 1951);
 
-			if (tempoUsado > 1000) {
-				try {
-					sleep(tempo);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Timeout.");
-			} else {
-				processoLogin++;
+			if (tempoUsado < tempoLimite) {
 				System.out.println("Usuário " + processoLogin + " logou.");
-			}
 
-		}
+				while (tempoComprando < tempoMaximo) {
+					tempoComprando = (int) ((Math.random() * 1000) + 2000);
 
-	}
-
-	private void tentandoComprar() {
-
-		int tempoComprando = 0;
-		int tempoMaximo = 2000;
-		int tempo = 50;
-
-		while (tempoComprando < tempoMaximo) {
-			tempoComprando = (int) ((Math.random() * 1000) + 2000);
-
-			if (tempoComprando > 2500) {
+					if (tempoComprando < 2500) {
+						System.out.println("Enviado para validação");
+						processoLogin++;
+					} else {
+						System.out.println("Encerrado login, compra não efetuada");
+						try {
+							sleep(tempo);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			} else {
+				System.out.println("Timeout.");
 				try {
 					sleep(tempo);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				System.out.println("Encerrado login, compra não efetuada");
-			} else {
-				System.out.println("Enviado para validação");
 			}
-
 		}
 	}
 
@@ -89,17 +80,19 @@ public class ThreadBilhete extends Thread {
 		while (compraBilhete <= totalBilhete) {
 			compraBilhete = (int) ((Math.random() * 1) + 4);
 
-			if (totalBilhete <= 0) {
+			if (totalBilhete > 0) {
+				totalBilhete = totalBilhete - compraBilhete;
+				System.out.println(" Usuário comprou: " + compraBilhete + " bilhete(s) código: " + idBilhete);
+
+			} else {
 				System.out.println("Bilhete esgotado.");
 				break;
-			} else {
-				processoValidar++;
-				System.out.println(" Usuário comprou: " + compraBilhete + " bilhete(s) código: " + idBilhete);
-				totalBilhete = totalBilhete - compraBilhete;
-
 			}
-
 		}
+	}
+
+	private void tentaDenovo() {
+		processoTentadenovo++;
 
 	}
 }
