@@ -6,6 +6,7 @@ public class ThreadBilhete extends Thread {
 
 	private int idBilhete;
 	private static int processoLogin;
+	private static int processoValidar;
 	private Semaphore semaforo;
 
 	public ThreadBilhete(int idBilhete, Semaphore semaforo) {
@@ -49,6 +50,7 @@ public class ThreadBilhete extends Thread {
 				}
 				System.out.println("Timeout.");
 			} else {
+				processoLogin++;
 				System.out.println("Usuário " + processoLogin + " logou.");
 			}
 
@@ -64,7 +66,7 @@ public class ThreadBilhete extends Thread {
 
 		while (tempoComprando < tempoMaximo) {
 			tempoComprando = (int) ((Math.random() * 1000) + 2000);
-			
+
 			if (tempoComprando > 2500) {
 				try {
 					sleep(tempo);
@@ -75,6 +77,7 @@ public class ThreadBilhete extends Thread {
 			} else {
 				System.out.println("Enviado para validação");
 			}
+
 		}
 	}
 
@@ -82,21 +85,21 @@ public class ThreadBilhete extends Thread {
 
 		int compraBilhete = 0;
 		int totalBilhete = 100;
-				
-			while (compraBilhete <= totalBilhete) {
-				compraBilhete = (int) ((Math.random() * 1) + 4);
 
-				if (totalBilhete <= 0) {
-					System.out.println("Bilhete esgotado.");
-					break;
-				} else {
-					System.out.println(" Usuário comprou: " + compraBilhete + " bilhete(s) código: " + idBilhete);
-					totalBilhete = totalBilhete - compraBilhete;
+		while (compraBilhete <= totalBilhete) {
+			compraBilhete = (int) ((Math.random() * 1) + 4);
 
-				}
+			if (totalBilhete <= 0) {
+				System.out.println("Bilhete esgotado.");
+				break;
+			} else {
+				processoValidar++;
+				System.out.println(" Usuário comprou: " + compraBilhete + " bilhete(s) código: " + idBilhete);
+				totalBilhete = totalBilhete - compraBilhete;
 
 			}
 
 		}
-	}
 
+	}
+}
