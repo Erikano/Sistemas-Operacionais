@@ -1,0 +1,28 @@
+package view;
+
+import java.io.IOException;
+import controller.ArquivosController;
+import controller.iArquivosController;
+
+public class Principal {
+
+	public static void main(String[] args) {
+
+		iArquivosController arqCont = new ArquivosController();
+
+		// String dirWin = "C:\\Windows";
+		String path = "C:\\Users\\TEMP\\Exercicio_Arquivo_Java";
+		String name = "teste";
+
+		try {
+			// arqCont.readDir(dirWin);
+			arqCont.createFile(path, name);
+			// arqCont.readFile(path, name);
+			// arqCont.openFile(path, name);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
